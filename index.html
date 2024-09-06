@@ -1,0 +1,1303 @@
+<!DOCTYPE html>
+<!-- saved from url=(0050)https://uiuc-earable-computing.github.io/binaural/ -->
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        
+		
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0">
+
+        <meta name="description" content="MSLDM Demos">
+        <meta name="author" content="Zhongweiyang Xu">
+
+	    <title>Multi-Source Music Generation with Latent Diffusion</title>
+
+        <!-- Bootflat CSS -->
+        <link rel="stylesheet" href="css/bootflat.css">
+
+        <!-- Bootstrap Core CSS -->
+        <link href="css/bootstrap.min.css" rel="stylesheet">
+
+        <!-- Custom CSS -->
+        <link href="css/index.css" rel="stylesheet">
+
+        <!-- Custom Fonts -->
+        <link href="font-awesome-4.7.0/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+        <link href="http://fonts.googleapis.com/css?family=Lato:300,400,700,300italic,400italic,700italic" rel="stylesheet" type="text/css">
+    <script type="text/javascript" src="js/jquery-1.12.4.min.js"></script><style type="text/css">.CtxtMenu_InfoClose {  top:.2em; right:.2em;}
+.CtxtMenu_InfoContent {  overflow:auto; text-align:left; font-size:80%;  padding:.4em .6em; border:1px inset; margin:1em 0px;  max-height:20em; max-width:30em; background-color:#EEEEEE;  white-space:normal;}
+.CtxtMenu_Info.CtxtMenu_MousePost {outline:none;}
+.CtxtMenu_Info {  position:fixed; left:50%; width:auto; text-align:center;  border:3px outset; padding:1em 2em; background-color:#DDDDDD;  color:black;  cursor:default; font-family:message-box; font-size:120%;  font-style:normal; text-indent:0; text-transform:none;  line-height:normal; letter-spacing:normal; word-spacing:normal;  word-wrap:normal; white-space:nowrap; float:none; z-index:201;  border-radius: 15px;                     /* Opera 10.5 and IE9 */  -webkit-border-radius:15px;               /* Safari and Chrome */  -moz-border-radius:15px;                  /* Firefox */  -khtml-border-radius:15px;                /* Konqueror */  box-shadow:0px 10px 20px #808080;         /* Opera 10.5 and IE9 */  -webkit-box-shadow:0px 10px 20px #808080; /* Safari 3 & Chrome */  -moz-box-shadow:0px 10px 20px #808080;    /* Forefox 3.5 */  -khtml-box-shadow:0px 10px 20px #808080;  /* Konqueror */  filter:progid:DXImageTransform.Microsoft.dropshadow(OffX=2, OffY=2, Color="gray", Positive="true"); /* IE */}
+</style><style type="text/css">.CtxtMenu_MenuClose {  position:absolute;  cursor:pointer;  display:inline-block;  border:2px solid #AAA;  border-radius:18px;  -webkit-border-radius: 18px;             /* Safari and Chrome */  -moz-border-radius: 18px;                /* Firefox */  -khtml-border-radius: 18px;              /* Konqueror */  font-family: "Courier New", Courier;  font-size:24px;  color:#F0F0F0}
+.CtxtMenu_MenuClose span {  display:block; background-color:#AAA; border:1.5px solid;  border-radius:18px;  -webkit-border-radius: 18px;             /* Safari and Chrome */  -moz-border-radius: 18px;                /* Firefox */  -khtml-border-radius: 18px;              /* Konqueror */  line-height:0;  padding:8px 0 6px     /* may need to be browser-specific */}
+.CtxtMenu_MenuClose:hover {  color:white!important;  border:2px solid #CCC!important}
+.CtxtMenu_MenuClose:hover span {  background-color:#CCC!important}
+.CtxtMenu_MenuClose:hover:focus {  outline:none}
+</style><style type="text/css">.CtxtMenu_Menu {  position:absolute;  background-color:white;  color:black;  width:auto; padding:5px 0px;  border:1px solid #CCCCCC; margin:0; cursor:default;  font: menu; text-align:left; text-indent:0; text-transform:none;  line-height:normal; letter-spacing:normal; word-spacing:normal;  word-wrap:normal; white-space:nowrap; float:none; z-index:201;  border-radius: 5px;                     /* Opera 10.5 and IE9 */  -webkit-border-radius: 5px;             /* Safari and Chrome */  -moz-border-radius: 5px;                /* Firefox */  -khtml-border-radius: 5px;              /* Konqueror */  box-shadow:0px 10px 20px #808080;         /* Opera 10.5 and IE9 */  -webkit-box-shadow:0px 10px 20px #808080; /* Safari 3 & Chrome */  -moz-box-shadow:0px 10px 20px #808080;    /* Forefox 3.5 */  -khtml-box-shadow:0px 10px 20px #808080;  /* Konqueror */}
+.CtxtMenu_MenuItem {  padding: 1px 2em;  background:transparent;}
+.CtxtMenu_MenuArrow {  position:absolute; right:.5em; padding-top:.25em; color:#666666;  font-family: null; font-size: .75em}
+.CtxtMenu_MenuActive .CtxtMenu_MenuArrow {color:white}
+.CtxtMenu_MenuArrow.CtxtMenu_RTL {left:.5em; right:auto}
+.CtxtMenu_MenuCheck {  position:absolute; left:.7em;  font-family: null}
+.CtxtMenu_MenuCheck.CtxtMenu_RTL { right:.7em; left:auto }
+.CtxtMenu_MenuRadioCheck {  position:absolute; left: .7em;}
+.CtxtMenu_MenuRadioCheck.CtxtMenu_RTL {  right: .7em; left:auto}
+.CtxtMenu_MenuInputBox {  padding-left: 1em; right:.5em; color:#666666;  font-family: null;}
+.CtxtMenu_MenuInputBox.CtxtMenu_RTL {  left: .1em;}
+.CtxtMenu_MenuComboBox {  left:.1em; padding-bottom:.5em;}
+.CtxtMenu_MenuSlider {  left: .1em;}
+.CtxtMenu_SliderValue {  position:absolute; right:.1em; padding-top:.25em; color:#333333;  font-size: .75em}
+.CtxtMenu_SliderBar {  outline: none; background: #d3d3d3}
+.CtxtMenu_MenuLabel {  padding: 1px 2em 3px 1.33em;  font-style:italic}
+.CtxtMenu_MenuRule {  border-top: 1px solid #DDDDDD;  margin: 4px 3px;}
+.CtxtMenu_MenuDisabled {  color:GrayText}
+.CtxtMenu_MenuActive {  background-color: #606872;  color: white;}
+.CtxtMenu_MenuDisabled:focus {  background-color: #E8E8E8}
+.CtxtMenu_MenuLabel:focus {  background-color: #E8E8E8}
+.CtxtMenu_ContextMenu:focus {  outline:none}
+.CtxtMenu_ContextMenu .CtxtMenu_MenuItem:focus {  outline:none}
+.CtxtMenu_SelectionMenu {  position:relative; float:left;  border-bottom: none; -webkit-box-shadow:none; -webkit-border-radius:0px; }
+.CtxtMenu_SelectionItem {  padding-right: 1em;}
+.CtxtMenu_Selection {  right: 40%; width:50%; }
+.CtxtMenu_SelectionBox {  padding: 0em; max-height:20em; max-width: none;  background-color:#FFFFFF;}
+.CtxtMenu_SelectionDivider {  clear: both; border-top: 2px solid #000000;}
+.CtxtMenu_Menu .CtxtMenu_MenuClose {  top:-10px; left:-10px}
+</style><style id="MJX-CHTML-styles">
+mjx-container[jax="CHTML"] {
+  line-height: 0;
+}
+
+mjx-container [space="1"] {
+  margin-left: .111em;
+}
+
+mjx-container [space="2"] {
+  margin-left: .167em;
+}
+
+mjx-container [space="3"] {
+  margin-left: .222em;
+}
+
+mjx-container [space="4"] {
+  margin-left: .278em;
+}
+
+mjx-container [space="5"] {
+  margin-left: .333em;
+}
+
+mjx-container [rspace="1"] {
+  margin-right: .111em;
+}
+
+mjx-container [rspace="2"] {
+  margin-right: .167em;
+}
+
+mjx-container [rspace="3"] {
+  margin-right: .222em;
+}
+
+mjx-container [rspace="4"] {
+  margin-right: .278em;
+}
+
+mjx-container [rspace="5"] {
+  margin-right: .333em;
+}
+
+mjx-container [size="s"] {
+  font-size: 70.7%;
+}
+
+mjx-container [size="ss"] {
+  font-size: 50%;
+}
+
+mjx-container [size="Tn"] {
+  font-size: 60%;
+}
+
+mjx-container [size="sm"] {
+  font-size: 85%;
+}
+
+mjx-container [size="lg"] {
+  font-size: 120%;
+}
+
+mjx-container [size="Lg"] {
+  font-size: 144%;
+}
+
+mjx-container [size="LG"] {
+  font-size: 173%;
+}
+
+mjx-container [size="hg"] {
+  font-size: 207%;
+}
+
+mjx-container [size="HG"] {
+  font-size: 249%;
+}
+
+mjx-container [width="full"] {
+  width: 100%;
+}
+
+mjx-box {
+  display: inline-block;
+}
+
+mjx-block {
+  display: block;
+}
+
+mjx-itable {
+  display: inline-table;
+}
+
+mjx-row {
+  display: table-row;
+}
+
+mjx-row > * {
+  display: table-cell;
+}
+
+mjx-mtext {
+  display: inline-block;
+}
+
+mjx-mstyle {
+  display: inline-block;
+}
+
+mjx-merror {
+  display: inline-block;
+  color: red;
+  background-color: yellow;
+}
+
+mjx-mphantom {
+  visibility: hidden;
+}
+
+_::-webkit-full-page-media, _:future, :root mjx-container {
+  will-change: opacity;
+}
+
+mjx-assistive-mml {
+  position: absolute !important;
+  top: 0px;
+  left: 0px;
+  clip: rect(1px, 1px, 1px, 1px);
+  padding: 1px 0px 0px 0px !important;
+  border: 0px !important;
+  display: block !important;
+  width: auto !important;
+  overflow: hidden !important;
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
+mjx-assistive-mml[display="block"] {
+  width: 100% !important;
+}
+
+mjx-c::before {
+  display: block;
+  width: 0;
+}
+
+.MJX-TEX {
+  font-family: MJXZERO, MJXTEX;
+}
+
+.TEX-B {
+  font-family: MJXZERO, MJXTEX-B;
+}
+
+.TEX-I {
+  font-family: MJXZERO, MJXTEX-I;
+}
+
+.TEX-MI {
+  font-family: MJXZERO, MJXTEX-MI;
+}
+
+.TEX-BI {
+  font-family: MJXZERO, MJXTEX-BI;
+}
+
+.TEX-S1 {
+  font-family: MJXZERO, MJXTEX-S1;
+}
+
+.TEX-S2 {
+  font-family: MJXZERO, MJXTEX-S2;
+}
+
+.TEX-S3 {
+  font-family: MJXZERO, MJXTEX-S3;
+}
+
+.TEX-S4 {
+  font-family: MJXZERO, MJXTEX-S4;
+}
+
+.TEX-A {
+  font-family: MJXZERO, MJXTEX-A;
+}
+
+.TEX-C {
+  font-family: MJXZERO, MJXTEX-C;
+}
+
+.TEX-CB {
+  font-family: MJXZERO, MJXTEX-CB;
+}
+
+.TEX-FR {
+  font-family: MJXZERO, MJXTEX-FR;
+}
+
+.TEX-FRB {
+  font-family: MJXZERO, MJXTEX-FRB;
+}
+
+.TEX-SS {
+  font-family: MJXZERO, MJXTEX-SS;
+}
+
+.TEX-SSB {
+  font-family: MJXZERO, MJXTEX-SSB;
+}
+
+.TEX-SSI {
+  font-family: MJXZERO, MJXTEX-SSI;
+}
+
+.TEX-SC {
+  font-family: MJXZERO, MJXTEX-SC;
+}
+
+.TEX-T {
+  font-family: MJXZERO, MJXTEX-T;
+}
+
+.TEX-V {
+  font-family: MJXZERO, MJXTEX-V;
+}
+
+.TEX-VB {
+  font-family: MJXZERO, MJXTEX-VB;
+}
+
+mjx-stretchy-v mjx-c, mjx-stretchy-h mjx-c {
+  font-family: MJXZERO, MJXTEX-S1, MJXTEX-S4, MJXTEX, MJXTEX-A ! important;
+}
+
+@font-face /* 0 */ {
+  font-family: MJXZERO;
+  src: url("https://cdn.jsdelivr.net/npm/mathjax@3/es5/output/chtml/fonts/woff-v2/MathJax_Zero.woff") format("woff");
+}
+
+@font-face /* 1 */ {
+  font-family: MJXTEX;
+  src: url("https://cdn.jsdelivr.net/npm/mathjax@3/es5/output/chtml/fonts/woff-v2/MathJax_Main-Regular.woff") format("woff");
+}
+
+@font-face /* 2 */ {
+  font-family: MJXTEX-B;
+  src: url("https://cdn.jsdelivr.net/npm/mathjax@3/es5/output/chtml/fonts/woff-v2/MathJax_Main-Bold.woff") format("woff");
+}
+
+@font-face /* 3 */ {
+  font-family: MJXTEX-I;
+  src: url("https://cdn.jsdelivr.net/npm/mathjax@3/es5/output/chtml/fonts/woff-v2/MathJax_Math-Italic.woff") format("woff");
+}
+
+@font-face /* 4 */ {
+  font-family: MJXTEX-MI;
+  src: url("https://cdn.jsdelivr.net/npm/mathjax@3/es5/output/chtml/fonts/woff-v2/MathJax_Main-Italic.woff") format("woff");
+}
+
+@font-face /* 5 */ {
+  font-family: MJXTEX-BI;
+  src: url("https://cdn.jsdelivr.net/npm/mathjax@3/es5/output/chtml/fonts/woff-v2/MathJax_Math-BoldItalic.woff") format("woff");
+}
+
+@font-face /* 6 */ {
+  font-family: MJXTEX-S1;
+  src: url("https://cdn.jsdelivr.net/npm/mathjax@3/es5/output/chtml/fonts/woff-v2/MathJax_Size1-Regular.woff") format("woff");
+}
+
+@font-face /* 7 */ {
+  font-family: MJXTEX-S2;
+  src: url("https://cdn.jsdelivr.net/npm/mathjax@3/es5/output/chtml/fonts/woff-v2/MathJax_Size2-Regular.woff") format("woff");
+}
+
+@font-face /* 8 */ {
+  font-family: MJXTEX-S3;
+  src: url("https://cdn.jsdelivr.net/npm/mathjax@3/es5/output/chtml/fonts/woff-v2/MathJax_Size3-Regular.woff") format("woff");
+}
+
+@font-face /* 9 */ {
+  font-family: MJXTEX-S4;
+  src: url("https://cdn.jsdelivr.net/npm/mathjax@3/es5/output/chtml/fonts/woff-v2/MathJax_Size4-Regular.woff") format("woff");
+}
+
+@font-face /* 10 */ {
+  font-family: MJXTEX-A;
+  src: url("https://cdn.jsdelivr.net/npm/mathjax@3/es5/output/chtml/fonts/woff-v2/MathJax_AMS-Regular.woff") format("woff");
+}
+
+@font-face /* 11 */ {
+  font-family: MJXTEX-C;
+  src: url("https://cdn.jsdelivr.net/npm/mathjax@3/es5/output/chtml/fonts/woff-v2/MathJax_Calligraphic-Regular.woff") format("woff");
+}
+
+@font-face /* 12 */ {
+  font-family: MJXTEX-CB;
+  src: url("https://cdn.jsdelivr.net/npm/mathjax@3/es5/output/chtml/fonts/woff-v2/MathJax_Calligraphic-Bold.woff") format("woff");
+}
+
+@font-face /* 13 */ {
+  font-family: MJXTEX-FR;
+  src: url("https://cdn.jsdelivr.net/npm/mathjax@3/es5/output/chtml/fonts/woff-v2/MathJax_Fraktur-Regular.woff") format("woff");
+}
+
+@font-face /* 14 */ {
+  font-family: MJXTEX-FRB;
+  src: url("https://cdn.jsdelivr.net/npm/mathjax@3/es5/output/chtml/fonts/woff-v2/MathJax_Fraktur-Bold.woff") format("woff");
+}
+
+@font-face /* 15 */ {
+  font-family: MJXTEX-SS;
+  src: url("https://cdn.jsdelivr.net/npm/mathjax@3/es5/output/chtml/fonts/woff-v2/MathJax_SansSerif-Regular.woff") format("woff");
+}
+
+@font-face /* 16 */ {
+  font-family: MJXTEX-SSB;
+  src: url("https://cdn.jsdelivr.net/npm/mathjax@3/es5/output/chtml/fonts/woff-v2/MathJax_SansSerif-Bold.woff") format("woff");
+}
+
+@font-face /* 17 */ {
+  font-family: MJXTEX-SSI;
+  src: url("https://cdn.jsdelivr.net/npm/mathjax@3/es5/output/chtml/fonts/woff-v2/MathJax_SansSerif-Italic.woff") format("woff");
+}
+
+@font-face /* 18 */ {
+  font-family: MJXTEX-SC;
+  src: url("https://cdn.jsdelivr.net/npm/mathjax@3/es5/output/chtml/fonts/woff-v2/MathJax_Script-Regular.woff") format("woff");
+}
+
+@font-face /* 19 */ {
+  font-family: MJXTEX-T;
+  src: url("https://cdn.jsdelivr.net/npm/mathjax@3/es5/output/chtml/fonts/woff-v2/MathJax_Typewriter-Regular.woff") format("woff");
+}
+
+@font-face /* 20 */ {
+  font-family: MJXTEX-V;
+  src: url("https://cdn.jsdelivr.net/npm/mathjax@3/es5/output/chtml/fonts/woff-v2/MathJax_Vector-Regular.woff") format("woff");
+}
+
+@font-face /* 21 */ {
+  font-family: MJXTEX-VB;
+  src: url("https://cdn.jsdelivr.net/npm/mathjax@3/es5/output/chtml/fonts/woff-v2/MathJax_Vector-Bold.woff") format("woff");
+}
+</style></head>
+
+
+    <body>
+        <div id="top" style="position: relative; top: -100px;"></div>
+        <header id="header_navbar">
+		    <nav class="navbar navbar-default navbar-fixed-top fadeIn" role="navigation" style="opacity: 1;">
+                <div>
+                    <div class="navbar-header">
+					    <button type="button" class="navbar-toggle collapsed" id="button_navbar" data-toggle="collapse" data-target="#dropdown-box-1">
+						    <span class="sr-only">Toggle navigation</span>
+						    <span class="icon-bar"></span>
+						    <span class="icon-bar"></span>
+						    <span class="icon-bar"></span>
+					    </button>
+				    </div>
+
+    		        <div class="collapse navbar-collapse navbar-right" id="dropdown-box-1">
+	    			    <ul class="nav navbar-nav">
+		    			    <li><a href="https://xzwy.github.io/MSLDMDemo/#intro_target">Overview</a></li>
+                            <!-- <li><a href="https://xzwy.github.io/SpatialCodecDemo/#results_target">Results</a></li> -->
+			    			<li><a href="https://xzwy.github.io/MSLDMDemo/#demos_target">Demos</a></li>
+				    		<li><a href="https://xzwy.github.io/MSLDMDemo/#references_target">References</a></li>
+				    	</ul>
+			        </div>
+                </div>
+		    </nav>
+	    </header>
+
+		<div id="paper_info">
+			<div id="paper_title">
+    	        <h1>Multi-Source Music Generation with Latent Diffusion</h1>
+                <!-- <p style="color:lightblue;font-size:18px;">Published as conference paper at ICML 2022  -->
+                    [<a href="https://github.com/XZWY/MSLDM">code</a>]
+                    <!-- [<a href="https://arxiv.org/abs/2309.07432">pdf</a>]</p> -->
+			
+
+
+				<h4><a href="https://xzwy.github.io/alanweiyang.github.io/">Zhongweiyang Xu</a>, <a href="https://debottam-dutta7.github.io/">Debottam Dutta;</a>, <a href="https://yulinlw2.web.illinois.edu/">Yu-Lin Wei;</a>, <a href="https://croy.web.engr.illinois.edu/">Romit Roy Choudhury;</a></h4>
+				<h5>University of Illinois Urbana-Champaign</h5>
+                <!-- <h5>&dagger; Carnegie Melon University</h5>
+                <h5>&ddagger; Tencent AI Lab, Bellevue, USA</h5>
+                <h5>&sharp; The Ohio State University</h5> -->
+
+			</div>
+		</div>
+
+        <div id="container">
+
+            <div id="intro_target" style="position: relative; top: -50px;"></div>
+	        <div id="intro">
+				<h2><a class="subtitle">Brief Overview</a></h2>
+                
+                
+
+
+                
+
+
+                <p> Most music generative models generate a single music mixture. To allow for more flexible and controllable generation, the Multi-Source Diffusion Model (MSDM) has been proposed to model music mixture as different instrument sources (piano, drums, bass, and guitar), which allows the generation of music composition by generating different instruments. Despite its capabilities, MSDM is unable to generate songs with rich melodies and often generates empty sounds. Also, waveform diffusion introduces significant Gaussian noise artifacts, which compromises audio quality. In response, we introduce a multi-source latent diffusion model (MSLDM) that employs Variational Autoencoders (VAEs) to encode each instrumental source into a distinct latent representation. By training a VAE on all music sources, we efficiently capture each source's unique characteristics in a "source latent" that our diffusion model models jointly. This approach significantly enhances the total and partial generation of music by leveraging the VAE’s latent compression and noise-robustness. The compressed source latent also facilitates more efficient generation. Subjective listening tests and Fréchet Audio Distance (FAD) scores confirm that our model outperforms MSDM, showcasing its practical and enhanced applicability in music generation systems. </p>
+                    
+                <!-- <a><embed src="img/2_stage_pipeline.pdf"  style="object-fit:contain;
+                    width:1000px;
+                    height:370px" class="center" /></a>
+                <a><iframe src="img/2_stage_pipeline.pdf" style="object-fit:contain;
+                    width:1000px;
+                    height:370px" class="center"></iframe></a> -->
+
+
+                <figure>
+                <img src="img/overall_framework.png" style="object-fit:contain;
+                    width:1300px;
+                    height:350px" class="center" title='Figure 1: Our pipline, training and inference'>
+                    <center>
+                        <figcaption>Figure 1: MLSDM architecture, Training and Inference</figcaption>
+                    </center>
+
+                </figure>
+                <br>  
+
+                <!-- <div class="architecture_caption">Fig. 1. Diagram of SISO SAGRNN. The dotted lines represent the procedures that exist only during training.</div> -->
+
+            <div id="demos_target" style="position: relative; top: -50px;"></div>
+            <div id="demos">
+                <h2><a class="subtitle">Audio Demo</a></h2>
+
+                <p align="justify">
+                    Here are some audio samples, the models configurations are shown below:
+                    <figure>
+                        <img src="img/models.png" style="object-fit:contain;
+                            width:650;
+                            height:175px" class="center" title='Figure 1: Our pipline, training and inference'>
+                            <!-- <center>
+                                <figcaption>Table1: All model's configurables.</figcaption>
+                            </center> -->
+        
+                        </figure>
+                    <!-- <ul align="justify" >
+                        <li>Unprocessed Mixture - original binaural sound mixture</li>
+                        <li>MIMO TasNet - refer to the approach in [2], where the network configurations are slightly changed such that the model is noncausal and has a comparable size to our model</li>
+                        <li>MIMO SAGRNN - refer to our proposed approach</li>
+                    </ul> -->
+                </p>
+
+                <br>
+
+                <!-- sample 1 start -->
+
+                <h4><b><p style="color:red;font-size:18px;">Total Generation Sample 1</p></b></h4>
+                <table class="audio_demos">
+                    <thead>
+                        <tr>
+                            <th style="text-align:center;">Methods</th>
+                            <th style="text-align:center;">Bass</th>
+                            <th style="text-align:center;">Drums</th>
+                            <th style="text-align:center;">Piano</th>
+                            <th style="text-align:center;">Guitar</th>
+                            <th style="text-align:center;">Mixture</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                        <tr style="border-top:1px solid black">
+                            <td>
+                                <b>MSDM [1]</b>
+                            </td>
+                            <td>
+                                <audio controls="" class="audio-player" preload="metadata" style="width: 220px;">
+                                    <source src="samples/total_genetion_icassp_demo/MSDM/bass/sample_1.wav" type="audio/wav">
+                                </audio>
+                            </td>
+                            <td>
+                                <audio controls="" class="audio-player" preload="metadata" style="width: 220px;">
+                                    <source src="samples/total_genetion_icassp_demo/MSDM/drums/sample_1.wav" type="audio/wav">
+                                </audio>
+                            </td>
+                            <td>
+                                <audio controls="" class="audio-player" preload="metadata" style="width: 220px;">
+                                    <source src="samples/total_genetion_icassp_demo/MSDM/piano/sample_1.wav" type="audio/wav">
+                                </audio>
+                            </td>
+                            <td>
+                                <audio controls="" class="audio-player" preload="metadata" style="width: 220px;">
+                                    <source src="samples/total_genetion_icassp_demo/MSDM/guitar/sample_1.wav" type="audio/wav">
+                                </audio>
+                            </td>
+                            <td>
+                                <audio controls="" class="audio-player" preload="metadata" style="width: 220px;">
+                                    <source src="samples/total_genetion_icassp_demo/MSDM/mixture/sample_1.wav" type="audio/wav">
+                                </audio>
+                            </td>
+                        </tr>
+                        <tr style="border-top:1px solid black">
+                            <td>
+                                <b>ISLDM</b>
+                            </td>
+                            <td>
+                                <audio controls="" class="audio-player" preload="metadata" style="width: 220px;">
+                                    <source src="samples/total_genetion_icassp_demo/ISLDM/bass/sample_1.wav" type="audio/wav">
+                                </audio>
+                            </td>
+                            <td>
+                                <audio controls="" class="audio-player" preload="metadata" style="width: 220px;">
+                                    <source src="samples/total_genetion_icassp_demo/ISLDM/drums/sample_1.wav" type="audio/wav">
+                                </audio>
+                            </td>
+                            <td>
+                                <audio controls="" class="audio-player" preload="metadata" style="width: 220px;">
+                                    <source src="samples/total_genetion_icassp_demo/ISLDM/piano/sample_1.wav" type="audio/wav">
+                                </audio>
+                            </td>
+                            <td>
+                                <audio controls="" class="audio-player" preload="metadata" style="width: 220px;">
+                                    <source src="samples/total_genetion_icassp_demo/ISLDM/guitar/sample_1.wav" type="audio/wav">
+                                </audio>
+                            </td>
+                            <td>
+                                <audio controls="" class="audio-player" preload="metadata" style="width: 220px;">
+                                    <source src="samples/total_genetion_icassp_demo/ISLDM/mixture/sample_1.wav" type="audio/wav">
+                                </audio>
+                            </td>
+                        </tr>
+                        <tr style="border-top:1px solid black">
+                            <td>
+                                <b>MSLDM (ours)</b>
+                            </td>
+                            <td>
+                                <audio controls="" class="audio-player" preload="metadata" style="width: 220px;">
+                                    <source src="samples/total_genetion_icassp_demo/MSLDM/bass/sample_1.wav" type="audio/wav">
+                                </audio>
+                            </td>
+                            <td>
+                                <audio controls="" class="audio-player" preload="metadata" style="width: 220px;">
+                                    <source src="samples/total_genetion_icassp_demo/MSLDM/drums/sample_1.wav" type="audio/wav">
+                                </audio>
+                            </td>
+                            <td>
+                                <audio controls="" class="audio-player" preload="metadata" style="width: 220px;">
+                                    <source src="samples/total_genetion_icassp_demo/MSLDM/piano/sample_1.wav" type="audio/wav">
+                                </audio>
+                            </td>
+                            <td>
+                                <audio controls="" class="audio-player" preload="metadata" style="width: 220px;">
+                                    <source src="samples/total_genetion_icassp_demo/MSLDM/guitar/sample_1.wav" type="audio/wav">
+                                </audio>
+                            </td>
+                            <td>
+                                <audio controls="" class="audio-player" preload="metadata" style="width: 220px;">
+                                    <source src="samples/total_genetion_icassp_demo/MSLDM/mixture/sample_1.wav" type="audio/wav">
+                                </audio>
+                            </td>
+                        </tr>
+                        <tr style="border-top:1px solid black">
+                            <td>
+                                <b>MSLDM-Large (Ours)</b>
+                            </td>
+                            <td>
+                                <audio controls="" class="audio-player" preload="metadata" style="width: 220px;">
+                                    <source src="samples/total_genetion_icassp_demo/MSLDM-Large/bass/sample_1.wav" type="audio/wav">
+                                </audio>
+                            </td>
+                            <td>
+                                <audio controls="" class="audio-player" preload="metadata" style="width: 220px;">
+                                    <source src="samples/total_genetion_icassp_demo/MSLDM-Large/drums/sample_1.wav" type="audio/wav">
+                                </audio>
+                            </td>
+                            <td>
+                                <audio controls="" class="audio-player" preload="metadata" style="width: 220px;">
+                                    <source src="samples/total_genetion_icassp_demo/MSLDM-Large/piano/sample_1.wav" type="audio/wav">
+                                </audio>
+                            </td>
+                            <td>
+                                <audio controls="" class="audio-player" preload="metadata" style="width: 220px;">
+                                    <source src="samples/total_genetion_icassp_demo/MSLDM-Large/guitar/sample_1.wav" type="audio/wav">
+                                </audio>
+                            </td>
+                            <td>
+                                <audio controls="" class="audio-player" preload="metadata" style="width: 220px;">
+                                    <source src="samples/total_genetion_icassp_demo/MSLDM-Large/mixture/sample_1.wav" type="audio/wav">
+                                </audio>
+                            </td>
+                        </tr>                        
+                        <tr style="border-top:1px solid black">
+                            <td><b>MixLDM</b></td>
+                            <td colspan="4" style="text-align:center;"></td>
+                            <td><audio controls="" class="audio-player" preload="metadata" style="width: 220px;">
+                                <source src="samples/total_genetion_icassp_demo/MixLDM/mixture/sample_1.wav" type="audio/wav"></audio></td>
+                        </tr>                     
+                    </tbody>
+                </table>
+                <!-- sample 1 end -->
+
+                <!-- sample 2 start -->
+                <h4><b><p style="color:red;font-size:18px;">Total Generation Sample 2</p></b></h4>
+                <table class="audio_demos">
+                    <thead>
+                        <tr>
+                            <th style="text-align:center;">Methods</th>
+                            <th style="text-align:center;">Bass</th>
+                            <th style="text-align:center;">Drums</th>
+                            <th style="text-align:center;">Piano</th>
+                            <th style="text-align:center;">Guitar</th>
+                            <th style="text-align:center;">Mixture</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                        <tr style="border-top:1px solid black">
+                            <td>
+                                <b>MSDM [1]</b>
+                            </td>
+                            <td>
+                                <audio controls="" class="audio-player" preload="metadata" style="width: 220px;">
+                                    <source src="samples/total_genetion_icassp_demo/MSDM/bass/sample_2.wav" type="audio/wav">
+                                </audio>
+                            </td>
+                            <td>
+                                <audio controls="" class="audio-player" preload="metadata" style="width: 220px;">
+                                    <source src="samples/total_genetion_icassp_demo/MSDM/drums/sample_2.wav" type="audio/wav">
+                                </audio>
+                            </td>
+                            <td>
+                                <audio controls="" class="audio-player" preload="metadata" style="width: 220px;">
+                                    <source src="samples/total_genetion_icassp_demo/MSDM/piano/sample_2.wav" type="audio/wav">
+                                </audio>
+                            </td>
+                            <td>
+                                <audio controls="" class="audio-player" preload="metadata" style="width: 220px;">
+                                    <source src="samples/total_genetion_icassp_demo/MSDM/guitar/sample_2.wav" type="audio/wav">
+                                </audio>
+                            </td>
+                            <td>
+                                <audio controls="" class="audio-player" preload="metadata" style="width: 220px;">
+                                    <source src="samples/total_genetion_icassp_demo/MSDM/mixture/sample_2.wav" type="audio/wav">
+                                </audio>
+                            </td>
+                        </tr>
+                        <tr style="border-top:1px solid black">
+                            <td>
+                                <b>ISLDM</b>
+                            </td>
+                            <td>
+                                <audio controls="" class="audio-player" preload="metadata" style="width: 220px;">
+                                    <source src="samples/total_genetion_icassp_demo/ISLDM/bass/sample_2.wav" type="audio/wav">
+                                </audio>
+                            </td>
+                            <td>
+                                <audio controls="" class="audio-player" preload="metadata" style="width: 220px;">
+                                    <source src="samples/total_genetion_icassp_demo/ISLDM/drums/sample_2.wav" type="audio/wav">
+                                </audio>
+                            </td>
+                            <td>
+                                <audio controls="" class="audio-player" preload="metadata" style="width: 220px;">
+                                    <source src="samples/total_genetion_icassp_demo/ISLDM/piano/sample_2.wav" type="audio/wav">
+                                </audio>
+                            </td>
+                            <td>
+                                <audio controls="" class="audio-player" preload="metadata" style="width: 220px;">
+                                    <source src="samples/total_genetion_icassp_demo/ISLDM/guitar/sample_2.wav" type="audio/wav">
+                                </audio>
+                            </td>
+                            <td>
+                                <audio controls="" class="audio-player" preload="metadata" style="width: 220px;">
+                                    <source src="samples/total_genetion_icassp_demo/ISLDM/mixture/sample_2.wav" type="audio/wav">
+                                </audio>
+                            </td>
+                        </tr>
+                        <tr style="border-top:1px solid black">
+                            <td>
+                                <b>MSLDM (ours)</b>
+                            </td>
+                            <td>
+                                <audio controls="" class="audio-player" preload="metadata" style="width: 220px;">
+                                    <source src="samples/total_genetion_icassp_demo/MSLDM/bass/sample_2.wav" type="audio/wav">
+                                </audio>
+                            </td>
+                            <td>
+                                <audio controls="" class="audio-player" preload="metadata" style="width: 220px;">
+                                    <source src="samples/total_genetion_icassp_demo/MSLDM/drums/sample_2.wav" type="audio/wav">
+                                </audio>
+                            </td>
+                            <td>
+                                <audio controls="" class="audio-player" preload="metadata" style="width: 220px;">
+                                    <source src="samples/total_genetion_icassp_demo/MSLDM/piano/sample_2.wav" type="audio/wav">
+                                </audio>
+                            </td>
+                            <td>
+                                <audio controls="" class="audio-player" preload="metadata" style="width: 220px;">
+                                    <source src="samples/total_genetion_icassp_demo/MSLDM/guitar/sample_2.wav" type="audio/wav">
+                                </audio>
+                            </td>
+                            <td>
+                                <audio controls="" class="audio-player" preload="metadata" style="width: 220px;">
+                                    <source src="samples/total_genetion_icassp_demo/MSLDM/mixture/sample_2.wav" type="audio/wav">
+                                </audio>
+                            </td>
+                        </tr>
+                        <tr style="border-top:1px solid black">
+                            <td>
+                                <b>MSLDM-Large (Ours)</b>
+                            </td>
+                            <td>
+                                <audio controls="" class="audio-player" preload="metadata" style="width: 220px;">
+                                    <source src="samples/total_genetion_icassp_demo/MSLDM-Large/bass/sample_2.wav" type="audio/wav">
+                                </audio>
+                            </td>
+                            <td>
+                                <audio controls="" class="audio-player" preload="metadata" style="width: 220px;">
+                                    <source src="samples/total_genetion_icassp_demo/MSLDM-Large/drums/sample_2.wav" type="audio/wav">
+                                </audio>
+                            </td>
+                            <td>
+                                <audio controls="" class="audio-player" preload="metadata" style="width: 220px;">
+                                    <source src="samples/total_genetion_icassp_demo/MSLDM-Large/piano/sample_2.wav" type="audio/wav">
+                                </audio>
+                            </td>
+                            <td>
+                                <audio controls="" class="audio-player" preload="metadata" style="width: 220px;">
+                                    <source src="samples/total_genetion_icassp_demo/MSLDM-Large/guitar/sample_2.wav" type="audio/wav">
+                                </audio>
+                            </td>
+                            <td>
+                                <audio controls="" class="audio-player" preload="metadata" style="width: 220px;">
+                                    <source src="samples/total_genetion_icassp_demo/MSLDM-Large/mixture/sample_2.wav" type="audio/wav">
+                                </audio>
+                            </td>
+                        </tr>                        
+                        <tr style="border-top:1px solid black">
+                            <td><b>MixLDM</b></td>
+                            <td colspan="4" style="text-align:center;"></td>
+                            <td><audio controls="" class="audio-player" preload="metadata" style="width: 220px;">
+                                <source src="samples/total_genetion_icassp_demo/MixLDM/mixture/sample_2.wav" type="audio/wav"></audio></td>
+                        </tr>                     
+                    </tbody>
+                </table>
+
+                <!-- sample 2 end -->
+
+                <!-- sample 3 start -->
+                <h4><b><p style="color:red;font-size:18px;">Partial Generation, condition on piano and guitar, generate bass and drums</p></b></h4>
+                <table class="audio_demos">
+                    <thead>
+                        <tr>
+                            <th style="text-align:center;">Methods</th>
+                            <th style="text-align:center;">Condition</th>
+                            <th style="text-align:center;">Generated</th>
+                            <th style="text-align:center;">Mixture</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                        <tr style="border-top:1px solid black">
+                            <td>
+                                <b>MSDM [1]</b>
+                            </td>
+                            <td>
+                                <audio controls="" class="audio-player" preload="metadata" style="width: 220px;">
+                                    <source src="samples/partial_genetaion_icassp_demo/condition/bass_drums.wav" type="audio/wav">
+                                </audio>
+                            </td>
+                            <td>
+                                <audio controls="" class="audio-player" preload="metadata" style="width: 220px;">
+                                    <source src="samples/partial_genetaion_icassp_demo/MSDM/inpainted/bass_drums.wav" type="audio/wav">
+                                </audio>
+                            </td>
+                            <td>
+                                <audio controls="" class="audio-player" preload="metadata" style="width: 220px;">
+                                    <source src="samples/partial_genetaion_icassp_demo/MSDM/mixture/bass_drums.wav" type="audio/wav">
+                                </audio>
+                            </td>
+                        </tr>
+                        
+                        <tr style="border-top:1px solid black">
+                            <td>
+                                <b>ISLDM</b>
+                            </td>
+                            <td>
+                                <audio controls="" class="audio-player" preload="metadata" style="width: 220px;">
+                                    <source src="samples/partial_genetaion_icassp_demo/condition/bass_drums.wav" type="audio/wav">
+                                </audio>
+                            </td>
+                            <td>
+                                <audio controls="" class="audio-player" preload="metadata" style="width: 220px;">
+                                    <source src="samples/partial_genetaion_icassp_demo/ISDM/inpainted/bass_drums.wav" type="audio/wav">
+                                </audio>
+                            </td>
+                            <td>
+                                <audio controls="" class="audio-player" preload="metadata" style="width: 220px;">
+                                    <source src="samples/partial_genetaion_icassp_demo/ISDM/mixture/bass_drums.wav" type="audio/wav">
+                                </audio>
+                            </td>
+                        </tr>
+                        <tr style="border-top:1px solid black">
+                            <td>
+                                <b>MSLDM</b>
+                            </td>
+                            <td>
+                                <audio controls="" class="audio-player" preload="metadata" style="width: 220px;">
+                                    <source src="samples/partial_genetaion_icassp_demo/condition/bass_drums.wav" type="audio/wav">
+                                </audio>
+                            </td>
+                            <td>
+                                <audio controls="" class="audio-player" preload="metadata" style="width: 220px;">
+                                    <source src="samples/partial_genetaion_icassp_demo/MSLDM/inpainted/bass_drums.wav" type="audio/wav">
+                                </audio>
+                            </td>
+                            <td>
+                                <audio controls="" class="audio-player" preload="metadata" style="width: 220px;">
+                                    <source src="samples/partial_genetaion_icassp_demo/MSLDM/mixture/bass_drums.wav" type="audio/wav">
+                                </audio>
+                            </td>
+                        </tr>
+                        <tr style="border-top:1px solid black">
+                            <td>
+                                <b>MSLDM-Large</b>
+                            </td>
+                            <td>
+                                <audio controls="" class="audio-player" preload="metadata" style="width: 220px;">
+                                    <source src="samples/partial_genetaion_icassp_demo/condition/bass_drums.wav" type="audio/wav">
+                                </audio>
+                            </td>
+                            <td>
+                                <audio controls="" class="audio-player" preload="metadata" style="width: 220px;">
+                                    <source src="samples/partial_genetaion_icassp_demo/MSLDM-Large/inpainted/bass_drums.wav" type="audio/wav">
+                                </audio>
+                            </td>
+                            <td>
+                                <audio controls="" class="audio-player" preload="metadata" style="width: 220px;">
+                                    <source src="samples/partial_genetaion_icassp_demo/MSLDM-Large/mixture/bass_drums.wav" type="audio/wav">
+                                </audio>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+                <!-- sample 3 end -->
+
+
+                <!-- sample 4 start -->
+                <h4><b><p style="color:red;font-size:18px;">Partial Generation, condition on drums and guitar, generate bass and piano</p></b></h4>
+                <table class="audio_demos">
+                    <thead>
+                        <tr>
+                            <th style="text-align:center;">Methods</th>
+                            <th style="text-align:center;">Condition</th>
+                            <th style="text-align:center;">Generated</th>
+                            <th style="text-align:center;">Mixture</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                        <tr style="border-top:1px solid black">
+                            <td>
+                                <b>MSDM [1]</b>
+                            </td>
+                            <td>
+                                <audio controls="" class="audio-player" preload="metadata" style="width: 220px;">
+                                    <source src="samples/partial_genetaion_icassp_demo/condition/bass_piano.wav" type="audio/wav">
+                                </audio>
+                            </td>
+                            <td>
+                                <audio controls="" class="audio-player" preload="metadata" style="width: 220px;">
+                                    <source src="samples/partial_genetaion_icassp_demo/MSDM/inpainted/bass_piano.wav" type="audio/wav">
+                                </audio>
+                            </td>
+                            <td>
+                                <audio controls="" class="audio-player" preload="metadata" style="width: 220px;">
+                                    <source src="samples/partial_genetaion_icassp_demo/MSDM/mixture/bass_piano.wav" type="audio/wav">
+                                </audio>
+                            </td>
+                        </tr>
+                        
+                        <tr style="border-top:1px solid black">
+                            <td>
+                                <b>ISLDM</b>
+                            </td>
+                            <td>
+                                <audio controls="" class="audio-player" preload="metadata" style="width: 220px;">
+                                    <source src="samples/partial_genetaion_icassp_demo/condition/bass_piano.wav" type="audio/wav">
+                                </audio>
+                            </td>
+                            <td>
+                                <audio controls="" class="audio-player" preload="metadata" style="width: 220px;">
+                                    <source src="samples/partial_genetaion_icassp_demo/ISDM/inpainted/bass_piano.wav" type="audio/wav">
+                                </audio>
+                            </td>
+                            <td>
+                                <audio controls="" class="audio-player" preload="metadata" style="width: 220px;">
+                                    <source src="samples/partial_genetaion_icassp_demo/ISDM/mixture/bass_piano.wav" type="audio/wav">
+                                </audio>
+                            </td>
+                        </tr>
+                        <tr style="border-top:1px solid black">
+                            <td>
+                                <b>MSLDM</b>
+                            </td>
+                            <td>
+                                <audio controls="" class="audio-player" preload="metadata" style="width: 220px;">
+                                    <source src="samples/partial_genetaion_icassp_demo/condition/bass_piano.wav" type="audio/wav">
+                                </audio>
+                            </td>
+                            <td>
+                                <audio controls="" class="audio-player" preload="metadata" style="width: 220px;">
+                                    <source src="samples/partial_genetaion_icassp_demo/MSLDM/inpainted/bass_piano.wav" type="audio/wav">
+                                </audio>
+                            </td>
+                            <td>
+                                <audio controls="" class="audio-player" preload="metadata" style="width: 220px;">
+                                    <source src="samples/partial_genetaion_icassp_demo/MSLDM/mixture/bass_piano.wav" type="audio/wav">
+                                </audio>
+                            </td>
+                        </tr>
+                        <tr style="border-top:1px solid black">
+                            <td>
+                                <b>MSLDM-Large</b>
+                            </td>
+                            <td>
+                                <audio controls="" class="audio-player" preload="metadata" style="width: 220px;">
+                                    <source src="samples/partial_genetaion_icassp_demo/condition/bass_piano.wav" type="audio/wav">
+                                </audio>
+                            </td>
+                            <td>
+                                <audio controls="" class="audio-player" preload="metadata" style="width: 220px;">
+                                    <source src="samples/partial_genetaion_icassp_demo/MSLDM-Large/inpainted/bass_piano.wav" type="audio/wav">
+                                </audio>
+                            </td>
+                            <td>
+                                <audio controls="" class="audio-player" preload="metadata" style="width: 220px;">
+                                    <source src="samples/partial_genetaion_icassp_demo/MSLDM-Large/mixture/bass_piano.wav" type="audio/wav">
+                                </audio>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+                <!-- sample 4 end -->
+
+                                <!-- sample 4 start -->
+                <h4><b><p style="color:red;font-size:18px;">Partial Generation, condition on drums and guitar, generate bass and piano</p></b></h4>
+                <table class="audio_demos">
+                    <thead>
+                        <tr>
+                            <th style="text-align:center;">Methods</th>
+                            <th style="text-align:center;">Condition</th>
+                            <th style="text-align:center;">Generated</th>
+                            <th style="text-align:center;">Mixture</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                        <tr style="border-top:1px solid black">
+                            <td>
+                                <b>MSDM [1]</b>
+                            </td>
+                            <td>
+                                <audio controls="" class="audio-player" preload="metadata" style="width: 220px;">
+                                    <source src="samples/partial_genetaion_icassp_demo/condition/bass_piano.wav" type="audio/wav">
+                                </audio>
+                            </td>
+                            <td>
+                                <audio controls="" class="audio-player" preload="metadata" style="width: 220px;">
+                                    <source src="samples/partial_genetaion_icassp_demo/MSDM/inpainted/bass_piano.wav" type="audio/wav">
+                                </audio>
+                            </td>
+                            <td>
+                                <audio controls="" class="audio-player" preload="metadata" style="width: 220px;">
+                                    <source src="samples/partial_genetaion_icassp_demo/MSDM/mixture/bass_piano.wav" type="audio/wav">
+                                </audio>
+                            </td>
+                        </tr>
+                        
+                        <tr style="border-top:1px solid black">
+                            <td>
+                                <b>ISLDM</b>
+                            </td>
+                            <td>
+                                <audio controls="" class="audio-player" preload="metadata" style="width: 220px;">
+                                    <source src="samples/partial_genetaion_icassp_demo/condition/bass_piano.wav" type="audio/wav">
+                                </audio>
+                            </td>
+                            <td>
+                                <audio controls="" class="audio-player" preload="metadata" style="width: 220px;">
+                                    <source src="samples/partial_genetaion_icassp_demo/ISDM/inpainted/bass_piano.wav" type="audio/wav">
+                                </audio>
+                            </td>
+                            <td>
+                                <audio controls="" class="audio-player" preload="metadata" style="width: 220px;">
+                                    <source src="samples/partial_genetaion_icassp_demo/ISDM/mixture/bass_piano.wav" type="audio/wav">
+                                </audio>
+                            </td>
+                        </tr>
+                        <tr style="border-top:1px solid black">
+                            <td>
+                                <b>MSLDM</b>
+                            </td>
+                            <td>
+                                <audio controls="" class="audio-player" preload="metadata" style="width: 220px;">
+                                    <source src="samples/partial_genetaion_icassp_demo/condition/bass_piano.wav" type="audio/wav">
+                                </audio>
+                            </td>
+                            <td>
+                                <audio controls="" class="audio-player" preload="metadata" style="width: 220px;">
+                                    <source src="samples/partial_genetaion_icassp_demo/MSLDM/inpainted/bass_piano.wav" type="audio/wav">
+                                </audio>
+                            </td>
+                            <td>
+                                <audio controls="" class="audio-player" preload="metadata" style="width: 220px;">
+                                    <source src="samples/partial_genetaion_icassp_demo/MSLDM/mixture/bass_piano.wav" type="audio/wav">
+                                </audio>
+                            </td>
+                        </tr>
+                        <tr style="border-top:1px solid black">
+                            <td>
+                                <b>MSLDM-Large</b>
+                            </td>
+                            <td>
+                                <audio controls="" class="audio-player" preload="metadata" style="width: 220px;">
+                                    <source src="samples/partial_genetaion_icassp_demo/condition/bass_piano.wav" type="audio/wav">
+                                </audio>
+                            </td>
+                            <td>
+                                <audio controls="" class="audio-player" preload="metadata" style="width: 220px;">
+                                    <source src="samples/partial_genetaion_icassp_demo/MSLDM-Large/inpainted/bass_piano.wav" type="audio/wav">
+                                </audio>
+                            </td>
+                            <td>
+                                <audio controls="" class="audio-player" preload="metadata" style="width: 220px;">
+                                    <source src="samples/partial_genetaion_icassp_demo/MSLDM-Large/mixture/bass_piano.wav" type="audio/wav">
+                                </audio>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+                <!-- sample 4 end -->
+                
+                <!-- sample 4 start -->
+                <h4><b><p style="color:red;font-size:18px;">Partial Generation, condition on bass and guitar, generate drums and piano</p></b></h4>
+                <table class="audio_demos">
+                    <thead>
+                        <tr>
+                            <th style="text-align:center;">Methods</th>
+                            <th style="text-align:center;">Condition</th>
+                            <th style="text-align:center;">Generated</th>
+                            <th style="text-align:center;">Mixture</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                        <tr style="border-top:1px solid black">
+                            <td>
+                                <b>MSDM [1]</b>
+                            </td>
+                            <td>
+                                <audio controls="" class="audio-player" preload="metadata" style="width: 220px;">
+                                    <source src="samples/partial_genetaion_icassp_demo/condition/drums_piano.wav" type="audio/wav">
+                                </audio>
+                            </td>
+                            <td>
+                                <audio controls="" class="audio-player" preload="metadata" style="width: 220px;">
+                                    <source src="samples/partial_genetaion_icassp_demo/MSDM/inpainted/drums_piano.wav" type="audio/wav">
+                                </audio>
+                            </td>
+                            <td>
+                                <audio controls="" class="audio-player" preload="metadata" style="width: 220px;">
+                                    <source src="samples/partial_genetaion_icassp_demo/MSDM/mixture/drums_piano.wav" type="audio/wav">
+                                </audio>
+                            </td>
+                        </tr>
+                        
+                        <tr style="border-top:1px solid black">
+                            <td>
+                                <b>ISLDM</b>
+                            </td>
+                            <td>
+                                <audio controls="" class="audio-player" preload="metadata" style="width: 220px;">
+                                    <source src="samples/partial_genetaion_icassp_demo/condition/drums_piano.wav" type="audio/wav">
+                                </audio>
+                            </td>
+                            <td>
+                                <audio controls="" class="audio-player" preload="metadata" style="width: 220px;">
+                                    <source src="samples/partial_genetaion_icassp_demo/ISDM/inpainted/drums_piano.wav" type="audio/wav">
+                                </audio>
+                            </td>
+                            <td>
+                                <audio controls="" class="audio-player" preload="metadata" style="width: 220px;">
+                                    <source src="samples/partial_genetaion_icassp_demo/ISDM/mixture/drums_piano.wav" type="audio/wav">
+                                </audio>
+                            </td>
+                        </tr>
+                        <tr style="border-top:1px solid black">
+                            <td>
+                                <b>MSLDM</b>
+                            </td>
+                            <td>
+                                <audio controls="" class="audio-player" preload="metadata" style="width: 220px;">
+                                    <source src="samples/partial_genetaion_icassp_demo/condition/drums_piano.wav" type="audio/wav">
+                                </audio>
+                            </td>
+                            <td>
+                                <audio controls="" class="audio-player" preload="metadata" style="width: 220px;">
+                                    <source src="samples/partial_genetaion_icassp_demo/MSLDM/inpainted/drums_piano.wav" type="audio/wav">
+                                </audio>
+                            </td>
+                            <td>
+                                <audio controls="" class="audio-player" preload="metadata" style="width: 220px;">
+                                    <source src="samples/partial_genetaion_icassp_demo/MSLDM/mixture/drums_piano.wav" type="audio/wav">
+                                </audio>
+                            </td>
+                        </tr>
+                        <tr style="border-top:1px solid black">
+                            <td>
+                                <b>MSLDM-Large</b>
+                            </td>
+                            <td>
+                                <audio controls="" class="audio-player" preload="metadata" style="width: 220px;">
+                                    <source src="samples/partial_genetaion_icassp_demo/condition/drums_piano.wav" type="audio/wav">
+                                </audio>
+                            </td>
+                            <td>
+                                <audio controls="" class="audio-player" preload="metadata" style="width: 220px;">
+                                    <source src="samples/partial_genetaion_icassp_demo/MSLDM-Large/inpainted/drums_piano.wav" type="audio/wav">
+                                </audio>
+                            </td>
+                            <td>
+                                <audio controls="" class="audio-player" preload="metadata" style="width: 220px;">
+                                    <source src="samples/partial_genetaion_icassp_demo/MSLDM-Large/mixture/drums_piano.wav" type="audio/wav">
+                                </audio>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+                <!-- sample 5 end -->
+
+            <div id="references_target" style="position: relative; top: -50px;"></div>
+            <div id="references">
+                <h1><a class="subtitle">References</a></h1>
+                
+                <p align="justify">
+                    [1] Giorgio Mariani, Irene Tallini, Emilian Postolache, Michele Mancusi, Luca Cosmo, Emanuele Rodolà, “Multi-Source Diffusion Models for Simultaneous Music Generation and Separation
+                    ”, 2024.
+                </p>
+    
+            </div>
+
+        </div>
+
+
+
+        <div id="footer">
+            <i>© September 2024 by Zhongweiyang Xu</i>
+		</div>
+
+        <div class="wow fadeIn" data-wow-delay="0.4s" style="visibility: hidden; -webkit-animation-name: none; -moz-animation-name: none; animation-name: none;-webkit-animation-delay: 0.4s; -moz-animation-delay: 0.4s; animation-delay: 0.4s;">
+	        <div class="btn-circle-scroll">
+			    <a href="https://xzwy.github.io/MSLDMDemo/#top" class="btn-circle">
+				    <i class="fa fa-angle-double-up"></i>
+				</a>
+			</div>
+		</div>
+
+        <script src="js/jquery-3.2.1.min.js"></script>
+        <script src="js/bootstrap.min.js"></script>
+    	<script src="js/jquery.easing.min.js"></script>
+	    <script src="js/jquery.scrollTo.js"></script>
+        <script src="js/wow.min.js"></script>
+        <script src="js/buffer-loader.js"></script>
+        <script src="js/crossfade.js"></script>
+        <script src="js/crossfade_mono.js"></script>
+        <script src="js/init.js"></script>
+        <script src="js/polyfill.min.js"></script>
+        <script id="MathJax-script" async="" src="js/tex-mml-chtml.js"></script>
+
+        <script type="text/javascript">
+            $(function(){
+                $("ul li a").click(function(){
+                    var hr = $(this).attr("href");
+                    var anh = $(hr).offset().top;
+                    $("html,body").stop().animate({scrollTop:anh}, 1000);
+                })
+            })
+        </script>
+
+        <script type="text/javascript">
+            (function($) {
+        	    new WOW().init();
+
+	            jQuery(window).load(function() {
+		            jQuery("#preloader").delay(100).fadeOut("slow");
+		            jQuery("#load").delay(100).fadeOut("slow");
+	            });
+
+            	//jQuery to collapse the navbar on scroll
+	            $(window).scroll(function() {
+	        	    if ($(".navbar").offset().top > 50) {
+			            $(".navbar-fixed-top").addClass("top-nav-collapse");
+		            } else {
+			            $(".navbar-fixed-top").removeClass("top-nav-collapse");
+	            	}
+            	});
+            })(jQuery);
+        </script>
+
+        <script type="text/javascript">
+            $(document).on("scroll",function(){
+	            if($(document).scrollTop() > 50){
+		            $(".navbar").stop().animate({
+                        opacity: '0.7'
+		            });
+	            }else{
+		            $(".navbar").stop().animate({
+                        opacity:'1.0'
+		            });
+	            }
+            });
+        </script>
+
+        <script type="text/javascript">
+        	//jQuery for page scrolling feature - requires jQuery Easing plugin
+	        $(function() {
+		        $('.btn-circle-scroll a').bind('click', function(event) {
+			        var $anchor = $(this);
+			        $('html, body').stop().animate({
+			           scrollTop: $($anchor.attr('href')).offset().top
+			           }, 1500, 'easeInOutExpo');
+		    	    event.preventDefault();
+		        });
+	        });
+        </script>
+
+    
+
+<!-- <div id="diigo-video-capture" style="display: none;"><div id="diigo-video-capture-container"><div id="diigo-video-capture-logo"></div>Capture</div></div><div id="diigo-video-capture-wrapper"><div id="diigo-video-capture-wrapper-tip">Drag to outliner or <span id="diigo-video-capture-upload">Upload</span></div><div id="diigo-video-capture-wrapper-close">Close</div></div><div id="diigo-chrome-installed" style="display: none;"></div><div class="jvectormap-tip"></div></body></html> -->
